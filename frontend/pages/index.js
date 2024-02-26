@@ -40,7 +40,8 @@ export default function Home() {
   // State variable to show loading state when waiting for a transaction to go through
   const [loading, setLoading] = useState(false);
   
-  const { writeContract } = useWriteContract(config);
+  const { writeContract } = useWriteContract();
+
 
   // Fake NFT Token ID to purchase. Used when creating a proposal.
   const [fakeNftTokenId, setFakeNftTokenId] = useState("");
