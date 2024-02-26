@@ -32,7 +32,7 @@ export default function Home() {
   // Check if the user's wallet is connected, and it's address using Wagmi's hooks.
   const { address, isConnected } = useAccount();
   const { connector } = useAccount(config);
-
+  
   
   // State variable to know if the component has been mounted yet or not
   const [isMounted, setIsMounted] = useState(false);
@@ -41,14 +41,16 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   
   const { writeContract } = useWriteContract();
-
-
+  
   // Fake NFT Token ID to purchase. Used when creating a proposal.
   const [fakeNftTokenId, setFakeNftTokenId] = useState("");
   // State variable to store all proposals in the DAO
   const [proposals, setProposals] = useState([]);
   // State variable to switch between the 'Create Proposal' and 'View Proposals' tabs
   const [selectedTab, setSelectedTab] = useState("");
+
+  const [currentHash, setCurrentHash] = useState();
+
   
   // Fetch the owner of the DAO
   const daoOwner = useReadContract({
@@ -78,7 +80,9 @@ export default function Home() {
   });
   
   // Function to make a createProposal transaction in the DAO
-
+  const transactionReceipt = useWaitForTransactionReceipt({
+    hash: currentHash,
+  });
   async function createProposal() {
     setLoading(true);
     try {      
@@ -88,25 +92,22 @@ export default function Home() {
         functionName: "createProposal",
         args: [fakeNftTokenId,],
       });
+      setCurrentHash(tx);
       
       //logging
       console.log(tx);
-
-      const transactionReceipt = useWaitForTransactionReceipt({
-        hash: tx,
-      });
       console.log(transactionReceipt);
     } catch (error) {
       window.alert(error);
       console.log(error);
-
+      
     }
     setLoading(false);
   }
 
   // Function to fetch a proposal by it's ID
   async function fetchProposalById(id) {
-
+    
     // at new version to readContract need config
     try {
       const proposal = await readContract(config, {
