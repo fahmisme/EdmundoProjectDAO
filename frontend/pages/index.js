@@ -92,7 +92,7 @@ export default function Home() {
       console.log(tx);
 
       const transactionReceipt = useWaitForTransactionReceipt({
-        hash: `0x${tx}`,
+        hash: tx,
       });
       console.log(transactionReceipt);
     } catch (error) {
